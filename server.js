@@ -1,10 +1,12 @@
-// backend.js
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const cors = require('cors');
 
 const app = express();
 const PORT = 5000;
+
+// This array will temporarily store submitted data
+let contactSubmissions = [];
 
 app.use(express.json()); // Middleware to parse JSON request body
 app.use(cors()); // Allow cross-origin requests
@@ -14,9 +16,9 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Contact Form API');
 });
 
-// Handle GET request for /api/contact (for testing)
+// Handle GET request for /api/contact to show all submitted data
 app.get('/api/contact', (req, res) => {
-    res.send('Use a POST request to submit the contact form.');
+    res.json(contactSubmissions); // Return all contact submissions
 });
 
 // Handle POST request for /api/contact
@@ -32,6 +34,10 @@ app.post('/api/contact', [
     }
 
     const { name, email, subject, message } = req.body;
+
+    // Store the submitted data in the contactSubmissions array
+    contactSubmissions.push({ name, email, subject, message });
+
     console.log('Form Submission:', { name, email, subject, message });
 
     res.status(200).json({ success: true, message: 'Form submitted successfully!' });
